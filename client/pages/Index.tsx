@@ -3,10 +3,8 @@
 import { motion } from "framer-motion";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
-import Projects from "@/components/sections/Projects";
 import Events from "@/components/sections/Events";
 import Team from "@/components/sections/Team";
-import Gallery from "@/components/sections/Gallery";
 import Join from "@/components/sections/Join";
 
 export default function Index() {
@@ -27,18 +25,6 @@ export default function Index() {
         className="py-20"
       >
         <About />
-      </motion.section>
-
-      {/* Projects Section */}
-      <motion.section
-        id="projects"
-        initial={{ opacity: 0, x: -50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="py-20 bg-gray-900/40 backdrop-blur"
-      >
-        <Projects />
       </motion.section>
 
       {/* Events Section */}
@@ -63,18 +49,6 @@ export default function Index() {
         className="py-20 bg-gray-900/40 backdrop-blur"
       >
         <Team />
-      </motion.section>
-
-      {/* Gallery Section */}
-      <motion.section
-        id="gallery"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="py-20"
-      >
-        <Gallery />
       </motion.section>
 
       {/* Join Section */}

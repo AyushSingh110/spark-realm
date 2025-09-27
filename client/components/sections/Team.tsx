@@ -1,100 +1,344 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRef } from "react";
 
-type Member = { name: string; role: string; image: string };
+type Member = { name: string; role: string; image: string; linkedin?: string; github?: string; };
 
 const team: Member[] = [
   {
-    name: "Aisha Khan",
-    role: "President",
-    image:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    name: "Liam Chen",
-    role: "VP, Research",
-    image:
-      "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    name: "Sofia Garcia",
-    role: "Events Lead",
-    image:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    name: "Prof. Patel",
+    name: "Prof. Dr. S. S. Kulkarni",
     role: "Faculty Mentor",
-    image:
-      "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=800&auto=format&fit=crop",
+    linkedin: "#",
+    github: "#"
+  },
+  {
+    name: "Ayush Patil",
+    role: "President",
+    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop",
+    linkedin: "#",
+    github: "#"
+  },
+  {
+    name: "Sakshi Sharma",
+    role: "Vice President",
+    image: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=800&auto=format&fit=crop",
+    linkedin: "#",
+    github: "#"
+  },
+  {
+    name: "Rohan Deshmukh",
+    role: "Technical Lead",
+    image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800&auto=format&fit=crop",
+    linkedin: "#",
+    github: "#"
+  },
+  {
+    name: "Priya Nair",
+    role: "Events Lead",
+    image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=800&auto=format&fit=crop",
+    linkedin: "#",
+    github: "#"
+  },
+  {
+    name: "Aditya Verma",
+    role: "Research Coordinator",
+    image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=800&auto=format&fit=crop",
+    linkedin: "#",
+    github: "#"
+  },
+  {
+    name: "Neha Gupta",
+    role: "Design & Outreach",
+    image: "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?q=80&w=800&auto=format&fit=crop",
+    linkedin: "#",
+    github: "#"
+  },
+  {
+    name: "Rahul Mehta",
+    role: "Community Manager",
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop",
+    linkedin: "#",
+    github: "#"
   },
 ];
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: 60,
+    scale: 0.8,
+    rotateY: -15,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    rotateY: 0,
+    transition: {
+      duration: 0.8,
+      type: "spring",
+      bounce: 0.4,
+    },
+  },
+  hover: {
+    scale: 1.05,
+    y: -10,
+    rotateY: 5,
+    transition: {
+      duration: 0.3,
+      type: "spring",
+      bounce: 0.6,
+    },
+  },
+};
+
+const avatarVariants = {
+  hidden: { scale: 0, rotate: -180 },
+  visible: {
+    scale: 1,
+    rotate: 0,
+    transition: {
+      delay: 0.2,
+      duration: 0.6,
+      type: "spring",
+      bounce: 0.6,
+    },
+  },
+  hover: {
+    scale: 1.1,
+    rotate: 5,
+    transition: { duration: 0.2 },
+  },
+};
+
+const glowVariants = {
+  hidden: { opacity: 0, scale: 0.5 },
+  visible: {
+    opacity: [0.4, 0.8, 0.4],
+    scale: [1, 1.2, 1],
+    transition: {
+      duration: 3,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
+  hover: {
+    opacity: 1,
+    scale: 1.3,
+    transition: { duration: 0.3 },
+  },
+};
+
+const textVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      delay: 0.4,
+      duration: 0.5,
+    },
+  },
+};
+
+const socialVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      delay: 0.6,
+      duration: 0.4,
+      type: "spring",
+    },
+  },
+};
+
+const iconHover = {
+  scale: 1.3,
+  rotate: 360,
+  color: "#3b82f6",
+  transition: { duration: 0.3 },
+};
+
 export default function Team() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-10%" });
+
   return (
     <section id="team" className="py-20 relative overflow-hidden">
-      <div className="container">
-        {/* Header */}
-        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          <span className="text-gradient">Team</span>
-        </h2>
-        <p className="mt-2 text-muted-foreground">
-          Student leads and faculty mentors.
-        </p>
-
-        {/* Team Grid */}
-        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {team.map((m, i) => (
-            <motion.div
-              key={m.name}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05 }}
-              className="rounded-xl border border-border bg-card/60 p-6 text-center backdrop-blur shadow hover:shadow-accent/20 transition"
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/20 to-purple-50/20 dark:from-blue-950/10 dark:to-purple-950/10" />
+      <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl animate-pulse" />
+      
+      <div className="container relative z-10" ref={ref}>
+        {/* Enhanced Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-center mb-16"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={isInView ? { scale: 1 } : { scale: 0 }}
+            transition={{ delay: 0.2, duration: 0.6, type: "spring" }}
+            className="inline-block p-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 mb-4"
+          >
+            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-2xl">
+              👥
+            </div>
+          </motion.div>
+          
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            <motion.span
+              initial={{ backgroundPosition: "0% 50%" }}
+              animate={{ backgroundPosition: "100% 50%" }}
+              transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
+              className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent bg-300% animate-gradient"
             >
-              {/* Avatar with Glow */}
-              <div className="relative inline-block">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary to-accent blur-md opacity-60 animate-pulse" />
-                <Avatar className="relative mx-auto h-24 w-24 border-2 border-border shadow-md">
-                  <AvatarImage src={m.image} alt={`${m.name} avatar`} />
-                  <AvatarFallback>
-                    {m.name
-                      .split(" ")
-                      .map((s) => s[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
+              Our Team
+            </motion.span>
+          </h2>
+          
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className="text-lg text-muted-foreground max-w-2xl mx-auto"
+          >
+            Meet the passionate individuals driving NextGen Club forward with innovation and dedication.
+          </motion.p>
+        </motion.div>
 
-              {/* Name + Role */}
-              <p className="mt-5 font-semibold text-lg">{m.name}</p>
-              <p className="text-sm text-muted-foreground">{m.role}</p>
+        {/* Enhanced Team Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto"
+        >
+          {team.map((member, index) => (
+            <motion.div
+              key={member.name}
+              variants={cardVariants}
+              whileHover="hover"
+              className="group relative"
+            >
+              {/* Card Background with Enhanced Styling */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/80 to-white/40 dark:from-gray-900/80 dark:to-gray-800/40 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 shadow-xl" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              {/* Card Content */}
+              <div className="relative p-8 text-center">
+                {/* Enhanced Avatar Section */}
+                <div className="relative inline-block mb-6">
+                  {/* Animated Glow Effect */}
+                  <motion.div
+                    variants={glowVariants}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover="hover"
+                    className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-400 via-purple-400 to-blue-400 blur-lg"
+                  />
+                  
+                  {/* Avatar */}
+                  <motion.div variants={avatarVariants}>
+                    <Avatar className="relative mx-auto h-28 w-28 border-4 border-white/50 dark:border-gray-700/50 shadow-2xl ring-2 ring-blue-500/20">
+                      <AvatarImage 
+                        src={member.image} 
+                        alt={`${member.name} avatar`}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xl font-bold">
+                        {member.name.split(" ").map((s) => s[0]).join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                  </motion.div>
+                  
+                  {/* Role Badge */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.8 + index * 0.1, duration: 0.4 }}
+                    className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-semibold shadow-lg"
+                  >
+                    {member.role.split(" ")[0]}
+                  </motion.div>
+                </div>
 
-              {/* Social Links Placeholder */}
-              <div className="mt-4 flex justify-center gap-3 text-muted-foreground">
-                <a
-                  href="#"
-                  className="hover:text-primary transition"
-                  aria-label="LinkedIn"
+                {/* Enhanced Text Content */}
+                <motion.div variants={textVariants}>
+                  <h3 className="font-bold text-xl mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                    {member.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4 font-medium">
+                    {member.role}
+                  </p>
+                </motion.div>
+
+                {/* Enhanced Social Links */}
+                <motion.div
+                  variants={socialVariants}
+                  className="flex justify-center gap-4"
                 >
-                  🔗
-                </a>
-                <a
-                  href="#"
-                  className="hover:text-primary transition"
-                  aria-label="GitHub"
-                >
-                  💻
-                </a>
+                  <motion.a
+                    href={member.linkedin}
+                    whileHover={iconHover}
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/10 to-blue-600/10 flex items-center justify-center text-blue-600 hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
+                    aria-label="LinkedIn"
+                  >
+                    💼
+                  </motion.a>
+                  <motion.a
+                    href={member.github}
+                    whileHover={iconHover}
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-500/10 to-gray-600/10 flex items-center justify-center text-gray-600 hover:bg-gray-800 hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
+                    aria-label="GitHub"
+                  >
+                    💻
+                  </motion.a>
+                </motion.div>
+
+                {/* Hover Effect Overlay */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/5 group-hover:to-purple-500/5 transition-all duration-500" />
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
+
+      {/* Add this to your global CSS for the gradient animation */}
+      <style jsx global>{`
+        @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .animate-gradient {
+          animation: gradient 3s ease infinite;
+        }
+        .bg-300% {
+          background-size: 300% 300%;
+        }
+      `}</style>
     </section>
   );
 }
