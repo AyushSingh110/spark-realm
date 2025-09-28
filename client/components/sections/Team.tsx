@@ -8,58 +8,44 @@ type Member = { name: string; role: string; image: string; linkedin?: string; gi
 
 const team: Member[] = [
   {
-    name: "Prof. Dr. S. S. Kulkarni",
-    role: "Faculty Mentor",
-    image: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=800&auto=format&fit=crop",
+    name: "Dr.Manisha Khadse",
+    role: "Research Head",
+    image: "#",
     linkedin: "#",
     github: "#"
   },
   {
-    name: "Ayush Patil",
+    name: "Dr.Renu Dadange",
+    role: "Research Head",
+    image: "#",
+    linkedin: "#",
+    github: "#"
+  },
+  {
+    name: "Affan Pathan",
     role: "President",
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop",
+    image: "#",
     linkedin: "#",
     github: "#"
   },
   {
-    name: "Sakshi Sharma",
+    name: "Pradnya Jadhav",
     role: "Vice President",
-    image: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=800&auto=format&fit=crop",
+    image: "#",
     linkedin: "#",
     github: "#"
   },
   {
-    name: "Rohan Deshmukh",
-    role: "Technical Lead",
-    image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800&auto=format&fit=crop",
+    name: "Amrisha vashistha",
+    role: "Vice President",
+    image: "#",
     linkedin: "#",
     github: "#"
   },
   {
-    name: "Priya Nair",
-    role: "Events Lead",
-    image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=800&auto=format&fit=crop",
-    linkedin: "#",
-    github: "#"
-  },
-  {
-    name: "Aditya Verma",
-    role: "Research Coordinator",
-    image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=800&auto=format&fit=crop",
-    linkedin: "#",
-    github: "#"
-  },
-  {
-    name: "Neha Gupta",
-    role: "Design & Outreach",
-    image: "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?q=80&w=800&auto=format&fit=crop",
-    linkedin: "#",
-    github: "#"
-  },
-  {
-    name: "Rahul Mehta",
-    role: "Community Manager",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop",
+    name: "Ashraf Pathan",
+    role: "Technical Leader",
+    image: "#",
     linkedin: "#",
     github: "#"
   },
