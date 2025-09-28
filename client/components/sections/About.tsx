@@ -1,11 +1,35 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef,useState,useEffect } from "react";
 
 export default function About() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
+
+  const [rot,setRot] = useState({x:0,y:0});
+  const [depth,setDepth] = useState(20);
+  
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      const x = (event.clientX / window.innerWidth) * 100;
+      const y = (event.clientY / window.innerHeight) * 100;
+
+      const maxDepth = 150; 
+      const centerFactor = 1 - Math.abs(x - 50) / 50;
+      setDepth(maxDepth * centerFactor);
+
+    setRot({
+    x: (x - 50) * -1.0, 
+    y: (y - 50) * 1.0,  
+      });
+    };
+    window.addEventListener("mousemove",handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
 
   // Animation variants
   const containerVariants = {
@@ -299,54 +323,82 @@ export default function About() {
             </motion.div>
           </motion.div>
 
-          {/* Right Image Section */}
+        {/* Right Image Section */}
+        <motion.div
+          variants={imageVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="relative flex justify-center items-center lg:pl-8 top-5 w-full"
+          style={{
+            perspective: "1000px",
+            transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`, 
+            transformStyle: "preserve-3d", 
+            transition: "transform 0.1s ease",
+          }}
+        >
+          {/* Floating Background Elements */}
           <motion.div
-            variants={imageVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            className="relative lg:pl-8"
+            variants={floatingVariants}
+            animate="animate"
+            className="absolute -top-8 -right-8 w-16 h-16 rounded-full bg-gradient-to-br from-purple-400/10 to-blue-400/10"
+            style={{ transform: 'translateZ(-1px)' }} 
+          />
+          <motion.div
+            variants={floatingVariants}
+            animate="animate"
+            transition={{ delay: 1 }}
+            className="absolute -bottom-8 -left-8 w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400/10 to-teal-400/10"
+            style={{ transform: 'translateZ(-1px)' }} 
+          />
+
+          {/* Main Image Container */}
+          <motion.div
+            variants={floatingVariants}
+            animate="animate"
+            className="relative top-10 w-full max-w-lg"
+            style={{
+              transform: `translateZ(${depth}px)`, 
+              transition: "transform 0.1s ease, box-shadow 0.1s ease",
+              position: 'relative', 
+              overflow: 'hidden',  
+            }}
           >
-            {/* Floating Background Elements */}
             <motion.div
-              variants={floatingVariants}
-              animate="animate"
-              className="absolute -top-8 -right-8 w-16 h-16 rounded-full bg-gradient-to-br from-purple-400/10 to-blue-400/10 blur-lg"
-            />
-            <motion.div
-              variants={floatingVariants}
-              animate="animate"
-              transition={{ delay: 1 }}
-              className="absolute -bottom-8 -left-8 w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400/10 to-teal-400/10 blur-lg"
+              className="absolute inset-0 pointer-events-none rounded-2xl"
+              style={{
+                background: `radial-gradient(
+                  circle at ${rot.y * 8 + 50}% ${rot.x * 8 + 50}%, 
+                  rgba(255, 255, 255, 0.4) 0%, 
+                  rgba(255, 255, 255, 0) 60%
+                )`,
+                opacity: 1,
+                transition: "background 0.1s ease",
+              }}
             />
 
-            {/* Main Image Container */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative"
+            {/* Subtle Image Glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-2xl blur-xl w-full rounded-2xl" />
+            
+            {/* The actual image holder */}
+            <div
+              className="relative rounded-2xl overflow-hidden border border-white/20 dark:border-gray-700/30 shadow-lg w-full"
+              style={{
+                  transform: `translateX(${rot.y * -0.8}px) translateY(${rot.x * -0.3}px)`,
+                  transition: "transform 0.1s ease",
+              }}
             >
-              {/* Subtle Image Glow */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-2xl blur-xl" />
+              <img
+                src="https://images.unsplash.com/photo-1555255707-c07966088b7b?q=80&w=1600&auto=format&fit=crop"
+                alt="Students collaborating on AI research"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
               
-              {/* Main Image */}
-              <motion.div
-                variants={floatingVariants}
-                animate="animate"
-                className="relative rounded-2xl overflow-hidden border border-white/20 dark:border-gray-700/30 shadow-lg"
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1555255707-c07966088b7b?q=80&w=1600&auto=format&fit=crop"
-                  alt="Students collaborating on AI research"
-                  className="w-full h-auto object-cover"
-                  loading="lazy"
-                />
-                
-                {/* Subtle Image Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/5 via-transparent to-blue-500/5" />
-              </motion.div>
-            </motion.div>
+              {/* Subtle Image Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/5 via-transparent to-blue-500/5" />
+            </div>
           </motion.div>
+        </motion.div>
         </div>
       </div>
 
